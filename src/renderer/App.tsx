@@ -2,6 +2,7 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import icon from '../../assets/icon.svg';
 import teamsico from '../../assets/teams.svg';
 import zoomico from '../../assets/zoom.svg';
+import closeico from '../../assets/close.svg';
 import './App.css';
 
 const Hello = () => {
@@ -26,8 +27,7 @@ const Hello = () => {
           id="btnZoom"
           type="button"
           onClick={() => {
-            const siteURL =
-              'https://us05web.zoom.us/j/86909229890?pwd=bjZmSXd0a1dyTkpUbCtSbmc3MTFWdz09';
+            const siteURL = 'https://us05web.zoom.us/wc/89675141488/start';
             window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
           }}
         >
@@ -35,6 +35,19 @@ const Hello = () => {
             <img width="40" alt="icon" src={zoomico} />
           </span>
           Connect Zoom
+        </button>
+        <button
+          id="btnClose"
+          type="button"
+          onClick={() => {
+            const siteURL = 'CLOSE';
+            window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+          }}
+        >
+          <span role="img" aria-label="folded hands">
+            <img width="40" alt="icon" src={closeico} />
+          </span>
+          Close
         </button>
       </div>
     </div>

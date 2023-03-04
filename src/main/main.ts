@@ -19,6 +19,7 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import ChildProcess from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -32,10 +33,10 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
+ipcMain.on('ipc-site', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+  event.reply('ipc-site', msgTemplate('pong'));
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -78,10 +79,13 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1920,
+    width: 1280,
     height: 1080,
     icon: getAssetPath('icon.png'),
+    transparent: true,
+    frame: false,
     webPreferences: {
+      devTools: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -104,10 +108,10 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
+  /*
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
+  */
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
@@ -123,24 +127,25 @@ const createWindow = async () => {
  * Add event listeners...
  */
 ipcMain.on('open-site', async (event, arg) => {
-  const userAgent =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36';
-  const view = new BrowserView();
-  view.webContents.setUserAgent(userAgent);
-  mainWindow?.setBrowserView(view);
-  view.setBounds({ x: 0, y: 0, width: 1920, height: 1000 });
-  const viewSession = view.webContents.session;
-  // viewSession.clearStorageData();
-  view.webContents.loadURL(arg[0]);
-  // Query all cookies associated with a specific url.
-  viewSession.cookies
-    .get({})
-    .then((cookies) => {
-      console.log(cookies);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  //  start bash script here
+  const livpath = path.normalize(`${__dirname}/../`); // go up along file tree to get lib directory
+  const script = ChildProcess.spawn('bash', [
+    `${livpath}lib/run-zoom.sh`,
+    arg[0],
+  ]);
+  console.log(`PID: ${script.pid}`);
+
+  script.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+
+  script.stderr.on('data', (err) => {
+    console.log(`stderr: ${err}`);
+  });
+
+  script.on('exit', (code) => {
+    console.log(`Exit Code: ${code}`);
+  });
 });
 
 app.on('window-all-closed', () => {

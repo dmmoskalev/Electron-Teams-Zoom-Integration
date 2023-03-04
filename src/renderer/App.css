@@ -4,14 +4,9 @@
  */
 body {
   position: relative;
-  color: white;
+  color: transparent;
   height: 100vh;
-  background: linear-gradient(
-    200.96deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
-  );
+  background: transparent;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
@@ -20,7 +15,8 @@ body {
 }
 
 button {
-  background-color: white;
+  background-color: red;
+  color: aliceblue;
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
@@ -32,6 +28,14 @@ button {
   cursor: pointer;
   opacity: 0.9;
   margin: 10px;
+}
+#btnTeams{
+  background-color: blue;
+  color: aliceblue;
+}
+#btnZoom{
+  background-color: blue;
+  color: aliceblue;
 }
 
 button:hover {
@@ -57,6 +61,7 @@ a:hover {
 
 .Hello {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
