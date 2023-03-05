@@ -6,12 +6,15 @@ body {
   position: relative;
   color: transparent;
   height: 100vh;
-  background: transparent;
+  background: rgb(31, 31, 31);
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.hidden{
+  display:none;
 }
 
 button {
@@ -41,6 +44,10 @@ button {
 button:hover {
   transform: scale(1.05);
   opacity: 1;
+}
+.label{
+  font-size: 5vh;
+  color: aliceblue;
 }
 
 li {

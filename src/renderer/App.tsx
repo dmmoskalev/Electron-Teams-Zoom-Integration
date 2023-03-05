@@ -1,64 +1,85 @@
+/* eslint-disable prettier/prettier */
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
+import { useState } from 'react';
+
 import teamsico from '../../assets/teams.svg';
 import zoomico from '../../assets/zoom.svg';
 import closeico from '../../assets/close.svg';
 import './App.css';
 
-const Hello = () => {
-  return (
-    <div>
-      <div className="Hello">
-        <button
-          id="btnTeams"
-          type="button"
-          onClick={() => {
-            const siteURL = 'https://teams.live.com/meet/9565454927353';
-            window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
-          }}
-        >
-          <span role="img" aria-label="books">
-            <img width="40" alt="icon" src={teamsico} />
-          </span>
-          Connect Teams
-        </button>
-
-        <button
-          id="btnZoom"
-          type="button"
-          onClick={() => {
-            const siteURL = 'https://us05web.zoom.us/wc/89675141488/start';
-            window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
-          }}
-        >
-          <span role="img" aria-label="folded hands">
-            <img width="40" alt="icon" src={zoomico} />
-          </span>
-          Connect Zoom
-        </button>
-        <button
-          id="btnClose"
-          type="button"
-          onClick={() => {
-            const siteURL = 'CLOSE';
-            window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
-          }}
-        >
-          <span role="img" aria-label="folded hands">
-            <img width="40" alt="icon" src={closeico} />
-          </span>
-          Close
-        </button>
-      </div>
-    </div>
-  );
-};
 
 export default function App() {
+  const [state, setState] = useState("init");
+
+
+  const delay = (ms:number) => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+  const changeStateWithDelay = async () => {
+    setState("connect");
+    await delay(3000);
+    setState("close");
+
+  };
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Hello />} />
+        <Route path="/" element={
+          <div>
+            <div className="Hello">
+              <button
+                id="btnTeams"
+                type="button"
+                onClick={() => {
+                  const siteURL = 'https://teams.live.com/meet/9565454927353';
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  changeStateWithDelay();
+                }}
+                className={(state==="init") ? "button":"hidden"}
+              >
+                <span role="img" aria-label="books">
+                  <img width="40" alt="icon" src={teamsico} />
+                </span>
+                Connect Teams
+              </button>
+
+              <button
+                id="btnZoom"
+                type="button"
+                onClick={() => {
+                  const siteURL = 'https://us05web.zoom.us/wc/89675141488/start';
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  changeStateWithDelay();
+                }}
+                className={(state==="init") ? "button":"hidden"}
+              >
+                <span role="img" aria-label="folded hands">
+                  <img width="40" alt="icon" src={zoomico} />
+                </span>
+                Connect Zoom
+              </button>
+              <button
+                id="btnClose"
+                type="button"
+                onClick={() => {
+                  const siteURL = 'CLOSE';
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  setState("init");
+                }}
+                className={(state==="close") ? "button":"hidden"}
+              >
+                <span role="img" aria-label="folded hands">
+                  <img width="40" alt="icon" src={closeico} />
+                </span>
+                Close
+              </button>
+              <div className={(state==="connect")? "label":"hidden"}>
+                <p>Connecting...</p>
+              </div>
+            </div>
+        </div>
+        } />
       </Routes>
     </Router>
   );
