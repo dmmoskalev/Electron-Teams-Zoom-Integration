@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
@@ -79,10 +80,10 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1380,
-    height: 600,
+    width: 1320,
+    height: 2160,
     icon: getAssetPath('icon.png'),
-    // transparent: true,
+    transparent: true,
     frame: false,
     webPreferences: {
       devTools: false,
@@ -128,6 +129,7 @@ const createWindow = async () => {
  */
 ipcMain.on('open-site', async (event, arg) => {
   //  start bash script here
+  // if(arg[0]==="CLOSE") mainWindow?.setSize(1280, 600, true);
   const livpath = path.normalize(`${__dirname}/../`); // go up along file tree to get lib directory
   const script = ChildProcess.spawn('bash', [
     `${livpath}lib/run-zoom.sh`,

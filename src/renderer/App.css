@@ -6,7 +6,7 @@ body {
   position: relative;
   color: transparent;
   height: 100vh;
-  background: rgb(31, 31, 31);
+  background: transparent;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;

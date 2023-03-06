@@ -20,8 +20,9 @@ while [ $(($wmax-$w)) -gt 0 ]
 do
 	xdotool search --onlyvisible --name "${1}" windowsize --sync $w $HEIGHT
 	w=$(( $w + $step ))
-	overwrite "WIDTH = ${w}"
+	step=$(( $wmax/$w ))
+	overwrite "WIDTH = ${w} STEP = ${step}"
 done
 }
 
-enlargesize "Electron Meetings Example" 3000 5
+enlargesize "Electron Meetings Example" 3000 30

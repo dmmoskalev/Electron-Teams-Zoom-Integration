@@ -16,10 +16,15 @@ export default function App() {
     resolve => setTimeout(resolve, ms)
   );
   const changeStateWithDelay = async () => {
-    setState("connect");
+    setState("connecting");
     await delay(3000);
     setState("close");
+  };
 
+  const initWithDelay = async () => {
+    setState("closing");
+    await delay(3000);
+    setState("init");
   };
 
   return (
@@ -65,7 +70,7 @@ export default function App() {
                 onClick={() => {
                   const siteURL = 'CLOSE';
                   window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
-                  setState("init");
+                  initWithDelay();
                 }}
                 className={(state==="close") ? "button":"hidden"}
               >
@@ -74,9 +79,10 @@ export default function App() {
                 </span>
                 Close
               </button>
-              <div className={(state==="connect")? "label":"hidden"}>
+              <div className={(state==="connecting")? "label":"hidden"}>
                 <p>Connecting...</p>
               </div>
+
             </div>
         </div>
         } />

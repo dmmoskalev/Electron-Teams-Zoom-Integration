@@ -15,8 +15,8 @@ echo "Done"
 URL=$1
 if [[ $URL == *CLOSE* ]]
 then
-	xdotool search --onlyvisible --name "Electron Meetings Example" windowsize --sync 1380 600
-	xdotool search --onlyvisible --name "Electron Meetings Example" windowmove 1280 780
+	xdotool search --onlyvisible --name "Electron Meetings Example" windowsize --sync 1380 2160
+	xdotool search --onlyvisible --name "Electron Meetings Example" windowmove 1280 0
 	sleep 1
 	exit 0
 fi
@@ -30,7 +30,6 @@ let ELECTRON_X_SHIFT=0
 
 let SIDE_PANEL_WIDTH=165
 let WM_MARGINE=52
-
 
 let BROWSER_WIDTH=$SCREEN_WIDTH-$ELECTRON_WIDTH-$SIDE_PANEL_WIDTH
 let BROWSER_HEIGHT=$SCREEN_HEIGHT
