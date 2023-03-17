@@ -17,7 +17,7 @@ export default function App() {
   );
   const changeStateWithDelay = async () => {
     setState("connecting");
-    await delay(5000);
+    await delay(3000);
     setState("close");
   };
 

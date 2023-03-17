@@ -13,10 +13,8 @@ import path from 'path';
 import {
   app,
   BrowserWindow,
-  BrowserView,
   shell,
-  ipcMain,
-  session,
+  ipcMain
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -84,6 +82,9 @@ const createWindow = async () => {
     height: 2160,
     icon: getAssetPath('icon.png'),
     transparent: true,
+    backgroundColor: '#ffffffff',
+    alwaysOnTop: true,
+    kiosk: true,
     frame: false,
     webPreferences: {
       devTools: false,
@@ -129,12 +130,33 @@ const createWindow = async () => {
  */
 ipcMain.on('open-site', async (event, arg) => {
   //  start bash script here
-  // if(arg[0]==="CLOSE") mainWindow?.setSize(1280, 600, true);
   const livpath = path.normalize(`${__dirname}/../`); // go up along file tree to get lib directory
   const script = ChildProcess.spawn('bash', [
-    `${livpath}lib/run-zoom.sh`,
+    `${livpath}lib/run-google.sh`,
     arg[0],
   ]);
+  // set window size mode and background color
+  const delay = (ms:number) => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+  const webContents = event.sender
+  const win = BrowserWindow.fromWebContents(webContents)
+  win?.setAlwaysOnTop(true)
+  if(arg[0]==="CLOSE") {
+    win?.setBackgroundColor('#ffffffff') // set not transparent color
+    win?.setKiosk(true)
+  }
+  else{
+    const reDrawWindowWithDelay = async () => {
+    await delay(3000);
+    win?.setBackgroundColor('#00ffffff'); // #AARRGGBB set transparent color
+    win?.setKiosk(false);
+    win?.setSize(200, 150, false);
+    win?.setPosition(0, 0, false);
+    };
+    reDrawWindowWithDelay();
+  }
+
   console.log(`PID: ${script.pid}`);
 
   script.stdout.on('data', (data) => {
