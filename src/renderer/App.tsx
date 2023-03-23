@@ -82,6 +82,16 @@ export default function App() {
               <div className={(state==="connecting")? "label":"hidden"}>
                 <p>Connecting...</p>
               </div>
+              <button
+                id="btnApi"
+                type="button"
+                onClick={() => {
+                  window.electron.ipcRenderer.sendPOSTreq('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]']);
+
+                }}
+                className="button"
+              > HTTP Request
+              </button>
 
             </div>
         </div>

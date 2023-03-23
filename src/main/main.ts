@@ -21,6 +21,9 @@ import log from 'electron-log';
 import ChildProcess from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { loginUser, User, Data } from './getAuth';
+import { getEquipment, Equipment } from './getEquipment';
+import { getBookings, Booking } from './getBookingsToday';
 
 class AppUpdater {
   constructor() {
@@ -84,8 +87,8 @@ const createWindow = async () => {
     transparent: true,
     backgroundColor: '#ffffffff',
     alwaysOnTop: true,
-    kiosk: true,
-    frame: false,
+    kiosk: false, // shou be true in production
+    frame: true,  // should be false in production
     webPreferences: {
       devTools: false,
       preload: app.isPackaged
@@ -128,6 +131,47 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+ipcMain.on('booco-post-req', async (event, arg) => {
+  console.log("api request here");
+
+  const user: User = await loginUser(arg[0], arg[1], arg[2], arg[3]) as User;
+  try
+    {
+    if(user.status === "success" && user.data.authToken === null) {
+        console.log("ERROR: user authorization failed");
+        return -1;
+        }
+
+        console.log("User authToken: %s\nUser ID: %s",
+        user.data.authToken, user.data.userId);
+        /*
+        const equipmentApi = '/api/v1/equipment?driver=booco-panel-device';
+        const eq: Equipment = await getEquipment(
+          arg[0],
+          equipmentApi,
+          user.data.authToken,
+          user.data.userId) as Equipment
+        return eq;
+        */
+        const todayBookingApi = '/api/v1/bookings/today';
+        const bk: Booking = await getBookings(
+          arg[0],
+          todayBookingApi,
+          user.data.authToken,
+          user.data.userId) as Booking
+        return bk;
+
+    }
+    catch(e){
+      if (e instanceof Error) {
+        console.log("ERROR: connection failed: {0}", e.message);
+        return -1;
+      }
+
+    }
+  return 0;
+});
+
 ipcMain.on('open-site', async (event, arg) => {
   //  start bash script here
   const livpath = path.normalize(`${__dirname}/../`); // go up along file tree to get lib directory

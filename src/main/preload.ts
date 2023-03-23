@@ -19,6 +19,9 @@ const electronHandler = {
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     },
+    sendPOSTreq(channel: Channels, args: unknown[]) {
+      ipcRenderer.send('booco-post-req', args);
+    },
   },
 };
 
