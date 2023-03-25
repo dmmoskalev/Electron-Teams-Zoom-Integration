@@ -5,11 +5,12 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { User, loginUser } from 'main/postAuth';
 import { BkngData, Booking, getBookings } from 'main/getBookingsToday';
 import { Meeting } from './meeting';
-
+import teamsico from '../../assets/teams.svg';
+import zoomico from '../../assets/zoom.svg';
 import closeico from '../../assets/close.svg';
 import './App.css';
 
-export const CurrentStateContext = createContext('init');
+export const CurrentUserContext = createContext('init');
 
 export default function App() {
 
@@ -45,13 +46,12 @@ export default function App() {
   const delay = (ms:number) => new Promise(
     resolve => setTimeout(resolve, ms)
   );
-  /*
   const changeStateWithDelay = async () => {
     setState("connecting");
     await delay(3000);
     setState("close");
   };
-*/
+
   const initWithDelay = async () => {
     setState("closing");
     await delay(3000);
@@ -133,7 +133,7 @@ useEffect(()=>{
 
 
   return (
-    <CurrentStateContext.Provider value = {{
+    <CurrentUserContext.Provider value = {{
       state,
       setState
     }}
@@ -145,10 +145,44 @@ useEffect(()=>{
             <div className="Hello">
             <hr />
               {bkng.map(bookitem =>
-                <Meeting key={bookitem._id} booking={bookitem} />
+                <Meeting key={bookitem._id} booking={bookitem} onClick={() => {
+                  const siteURL = {};
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  changeStateWithDelay();
+                }} state={state}/>
               )}
             <hr />
+              <button
+                id="btnTeams"
+                type="button"
+                onClick={() => {
+                  const siteURL = 'https://teams.live.com/meet/9565454927353';
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  changeStateWithDelay();
+                }}
+                className={(state==="init") ? "button":"hidden"}
+              >
+                <span role="img" aria-label="books">
+                  <img width="40" alt="icon" src={teamsico} />
+                </span>
+                Connect Teams
+              </button>
 
+              <button
+                id="btnZoom"
+                type="button"
+                onClick={() => {
+                  const siteURL = 'https://us05web.zoom.us/wc/89675141488/start';
+                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
+                  changeStateWithDelay();
+                }}
+                className={(state==="init") ? "button":"hidden"}
+              >
+                <span role="img" aria-label="folded hands">
+                  <img width="40" alt="icon" src={zoomico} />
+                </span>
+                Connect Zoom
+              </button>
               <button
                 id="btnClose"
                 type="button"
@@ -157,7 +191,7 @@ useEffect(()=>{
                   window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
                   initWithDelay();
                 }}
-                className={(state==="close") ? "buttonRed":"hidden"}
+                className={(state==="close") ? "button":"hidden"}
               >
                 <span role="img" aria-label="folded hands">
                   <img width="40" alt="icon" src={closeico} />
@@ -167,7 +201,27 @@ useEffect(()=>{
               <div className={(state==="connecting")? "label":"hidden"}>
                 <p>Connecting...</p>
               </div>
+              <button
+                id="btnApi"
+                type="button"
+                onClick={() => {
+                  // window.electron.ipcRenderer.sendPOSTreq('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]']);
+                setShow(!show);
+                }}
+                className="buttonGray"
+              > get Today Schedule
+              </button>
 
+              <button
+                id="btnNewBook"
+                type="button"
+                onClick={() => {
+                  window.electron.ipcRenderer.postNewBooking('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]']);
+
+                }}
+                className="buttonGray"
+              > generate new booking
+              </button>
 
 
 
@@ -176,6 +230,6 @@ useEffect(()=>{
         } />
       </Routes>
     </Router>
-    </CurrentStateContext.Provider>
+    </CurrentUserContext.Provider>
   );
 }

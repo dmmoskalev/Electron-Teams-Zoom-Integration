@@ -21,9 +21,10 @@ import log from 'electron-log';
 import ChildProcess from 'child_process';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { loginUser, User, Data } from './getAuth';
+import { loginUser, User, Data } from './postAuth';
 import { getEquipment, Equipment } from './getEquipment';
 import { getBookings, Booking } from './getBookingsToday';
+import { postNewBooking, NewBooking } from './postBookingVC';
 
 class AppUpdater {
   constructor() {
@@ -87,10 +88,10 @@ const createWindow = async () => {
     transparent: true,
     backgroundColor: '#ffffffff',
     alwaysOnTop: true,
-    kiosk: false, // shou be true in production
-    frame: true,  // should be false in production
+    kiosk: true, // should be true in production
+    frame: false,  // should be false in production
     webPreferences: {
-      devTools: false,
+      devTools: true, // also should be false in production
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -98,6 +99,8 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
+  // hide the following in production
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
@@ -113,10 +116,10 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-  /*
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-  */
+
+  // const menuBuilder = new MenuBuilder(mainWindow);
+  // menuBuilder.buildMenu();
+
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
@@ -125,7 +128,7 @@ const createWindow = async () => {
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
-  new AppUpdater();
+  // new AppUpdater();
 };
 
 /**
@@ -172,11 +175,47 @@ ipcMain.on('booco-post-req', async (event, arg) => {
   return 0;
 });
 
+ipcMain.on('booco-postnewbook-req', async (event, arg) => {
+  console.log("generate new bookings");
+
+  const user: User = await loginUser(arg[0], arg[1], arg[2], arg[3]) as User;
+  try
+    {
+    if(user.status === "success" && user.data.authToken === null) {
+        console.log("ERROR: user authorization failed");
+        return -1;
+        }
+
+        console.log("User authToken: %s\nUser ID: %s",
+        user.data.authToken, user.data.userId);
+        // const today = new Date().getUTCDay().toString();
+        // const time = new Date().toTimeString();
+        const nbk: NewBooking = await postNewBooking(
+          arg[0],
+          '2023-03-25',
+          '19',
+          '2fwKcjvxkbrJvtM7L',
+          'https://us05web.zoom.us/wc/82604234154/start',
+          user.data.authToken,
+          user.data.userId) as NewBooking
+        return nbk;
+
+    }
+    catch(e){
+      if (e instanceof Error) {
+        console.log("ERROR: connection failed: {0}", e.message);
+        return -1;
+      }
+
+    }
+  return 0;
+});
+
 ipcMain.on('open-site', async (event, arg) => {
   //  start bash script here
   const livpath = path.normalize(`${__dirname}/../`); // go up along file tree to get lib directory
   const script = ChildProcess.spawn('bash', [
-    `${livpath}lib/run-google.sh`,
+    `${livpath}lib/run.sh`,
     arg[0],
   ]);
   // set window size mode and background color

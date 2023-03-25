@@ -22,6 +22,9 @@ const electronHandler = {
     sendPOSTreq(channel: Channels, args: unknown[]) {
       ipcRenderer.send('booco-post-req', args);
     },
+    postNewBooking(channel: Channels, args: unknown[]) {
+      ipcRenderer.send('booco-postnewbook-req', args);
+    },
   },
 };
 

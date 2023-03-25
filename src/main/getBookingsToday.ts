@@ -4,7 +4,7 @@
 
 import fetch from 'node-fetch';
 
-type BkngData = {
+export type BkngData = {
   _id: string;
   createdAt?: Date;
   venueId: string;
