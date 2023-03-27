@@ -16,16 +16,41 @@ body {
 .hidden{
   display:none;
 }
-
-.button {
-
-  color: aliceblue;
+.control-panel{
+  display: flex;
+  flex-direction: row;
+  align-self: center;
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
   appearance: none;
-  font-size: 1.3rem;
-  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+  background-color: #ffffff;
+  width: 200px;
+  height:50px;
+}
+.control-button {
+  background-color: #ffffff;
+  color: #555;
+  border-radius: 10px;
+  border: none;
+  appearance: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.9;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.button {
+  background-color: #ffffff;
+  color: #555;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  appearance: none;
+  font-size: 0.8rem;
+  box-shadow: 0px 8px 10px -6px rgba(24, 39, 75, 0.12),
     0px 18px 88px -4px rgba(24, 39, 75, 0.14);
   transition: all ease-in 0.1s;
   cursor: pointer;
@@ -119,6 +144,14 @@ a:hover {
   position: relative;
 
 }
+.schedule-header{
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+  min-width: 900px;
+  padding: 10px 30px;
+  position: relative;
+}
 .zoom-logo{
   height: 48px;
   min-width: 48px;
@@ -141,6 +174,13 @@ a:hover {
   color: #555;
   position: relative;
   width: fit-content;
+}
+.text-shedule-header{
+  color: darkblue;
+  font-size: large;
+  font-weight: 600;
+  position: relative;
+  width: 800px;
 }
 .view-subject{
   align-items: center;
@@ -179,3 +219,7 @@ a:hover {
   width: 24px;
   position: relative;
 }
+.icon-booco{
+  height: 24px;
+  width: 24px;
+  }

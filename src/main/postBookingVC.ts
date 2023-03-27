@@ -1,9 +1,9 @@
 /*
-{"venueId":"2fwKcjvxkbrJvtM7L","subject":"Zooming","organizer":"Дмитрий Москалев",
-"start": "2023-03-25T19:00:00.000Z","end":"2023-03-25T19:30:00.000Z",
+{"venueId":"2fwKcjvxkbrJvtM7L","subject":"Локальная конференция 2 группы разработчиков в Zoom","organizer":"Дмитрий Москалев",
+"start": "2023-03-27T17:00:00.000Z","end":"2023-03-27T17:30:00.000Z",
 "vcsLocation":"https://us05web.zoom.us/wc/82604234154/start"}
 {"venueId":"2fwKcjvxkbrJvtM7L","subject":"Большая конференция с длинным названием в Teams","organizer":"Дмитрий Москалев",
-"start": "2023-03-25T17:00:00.000Z","end":"2023-03-25T17:30:00.000Z",
+"start": "2023-03-27T20:00:00.000Z","end":"2023-03-25T20:30:00.000Z",
 "vcsLocation":"https://teams.live.com/meet/9439360345253"}
 */
 import fetch from 'node-fetch';
@@ -23,24 +23,26 @@ export async function postNewBooking(
   userId: string
 ) {
   try {
-    const api = '/api/v1/bookings';
+    const api = '/api/v1/bookings/add';
     const reqstr = uri + api;
-    const testreq = JSON.stringify({
+    let testreq = JSON.stringify({
       venueId: vid,
-      subject: 'Zooming',
+      subject: 'Тестовая конференция',
       organizer: 'Дмитрий Москалев',
       start: `${date}T${hour}:00:00.000Z`,
-      end: `${date}T${hour}:30:00.000Z`,
+      end: `${date}T${hour}:15:00.000Z`,
       vcsLocation: vcsUri,
     });
+    testreq = '{"venueId":"2fwKcjvxkbrJvtM7L","subject":"Local conference Zoom","organizer":"Dmitriy Moskalev", "start": "2023-03-27T13:30:00.000Z","end":"2023-03-27T13:45:00.000Z", "vcsLocation":"https://us05web.zoom.us/wc/82604234154/start"}';
+    /*
     const response = await fetch(reqstr, {
       method: 'POST',
       body: JSON.stringify({
         venueId: vid,
-        subject: 'Zooming',
+        subject: 'Тестовая конференция',
         organizer: 'Дмитрий Москалев',
         start: `${date}T${hour}:00:00.000Z`,
-        end: `${date}T${hour}:30:00.000Z`,
+        end: `${date}T${hour}:15:00.000Z`,
         vcsLocation: vcsUri,
       }),
       headers: {
@@ -49,7 +51,16 @@ export async function postNewBooking(
         'X-User-Id': userId,
       },
     });
-
+*/
+    const response = await fetch(reqstr, {
+      method: 'POST',
+      body: testreq,
+      headers: {
+        Accept: 'application/json',
+        'X-Auth-Token': authToken,
+        'X-User-Id': userId,
+      },
+    });
     if (!response.ok) {
       throw new Error(`Error! POST status: ${response.status}`);
     }

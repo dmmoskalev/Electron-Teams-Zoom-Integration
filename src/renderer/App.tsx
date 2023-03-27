@@ -5,8 +5,10 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { User, loginUser } from 'main/postAuth';
 import { BkngData, Booking, getBookings } from 'main/getBookingsToday';
 import { Meeting } from './meeting';
-
+import { CloseButton } from './closeButton';
+import { RecordButton } from './recordButton';
 import closeico from '../../assets/close.svg';
+import boocoicon from '../../assets/booco_logo.svg';
 import './App.css';
 
 export const CurrentStateContext = createContext('init');
@@ -40,7 +42,8 @@ export default function App() {
 
   const [state, setState] = useState("init");
   const [show, setShow] = useState(false);
-
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const today = new Date().toLocaleDateString('ru-RU', options);
 
   const delay = (ms:number) => new Promise(
     resolve => setTimeout(resolve, ms)
@@ -51,13 +54,13 @@ export default function App() {
     await delay(3000);
     setState("close");
   };
-*/
+
   const initWithDelay = async () => {
     setState("closing");
     await delay(3000);
     setState("init");
   };
-
+*/
   interface ApiMeta {
     uri: string,
     api: string,
@@ -143,31 +146,41 @@ useEffect(()=>{
         <Route path="/" element={
           <div>
             <div className="Hello">
-            <hr />
+            <div className={(state==="init") ? "schedule-header":"hidden"}>
+                <img className="icon-booco"
+                  src={boocoicon}
+                  alt="icon" />
+                <div className="text-shedule-header">
+                  Переговорная с оригинальным названием
+                </div>
+                <div className="text-organizer">
+                  {today}
+                </div>
+              </div>
+
               {bkng.map(bookitem =>
                 <Meeting key={bookitem._id} booking={bookitem} />
               )}
-            <hr />
 
-              <button
-                id="btnClose"
-                type="button"
-                onClick={() => {
-                  const siteURL = 'CLOSE';
-                  window.electron.ipcRenderer.sendMessage('open-site', [siteURL]);
-                  initWithDelay();
-                }}
-                className={(state==="close") ? "buttonRed":"hidden"}
-              >
-                <span role="img" aria-label="folded hands">
-                  <img width="40" alt="icon" src={closeico} />
-                </span>
-                Close
-              </button>
+              <div id="controlPanel" className="control-panel">
+              <CloseButton />
+              <RecordButton />
+              </div>
+
+
               <div className={(state==="connecting")? "label":"hidden"}>
                 <p>Connecting...</p>
               </div>
+              <button
+                id="btnNewBook"
+                type="button"
+                onClick={() => {
+                  window.electron.ipcRenderer.postNewBooking('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]']);
 
+                }}
+                className="hidden"
+              > generate new booking
+              </button>
 
 
 

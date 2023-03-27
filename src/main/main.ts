@@ -192,8 +192,8 @@ ipcMain.on('booco-postnewbook-req', async (event, arg) => {
         // const time = new Date().toTimeString();
         const nbk: NewBooking = await postNewBooking(
           arg[0],
-          '2023-03-25',
-          '19',
+          '2023-03-27',
+          '13',
           '2fwKcjvxkbrJvtM7L',
           'https://us05web.zoom.us/wc/82604234154/start',
           user.data.authToken,
@@ -234,8 +234,8 @@ ipcMain.on('open-site', async (event, arg) => {
     await delay(3000);
     win?.setBackgroundColor('#00ffffff'); // #AARRGGBB set transparent color
     win?.setKiosk(false);
-    win?.setSize(200, 150, false);
-    win?.setPosition(0, 0, false);
+    win?.setSize(300, 130, false);
+    win?.setPosition(0, 930, false);
     };
     reDrawWindowWithDelay();
   }
