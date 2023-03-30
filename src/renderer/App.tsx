@@ -172,16 +172,25 @@ useEffect(()=>{
                 <p>Connecting...</p>
               </div>
               <button
-                id="btnNewBook"
+                id="btnNewZoomBook"
                 type="button"
                 onClick={() => {
-                  window.electron.ipcRenderer.postNewBooking('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]']);
+                  window.electron.ipcRenderer.postNewBooking('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]', 'ZOOM']);
 
                 }}
-                className="hidden"
-              > generate new booking
+                className={(state==="init") ? "buttonGray":"hidden"}
+              > generate new Zoom booking
               </button>
+              <button
+                id="btnNewTeamsBook"
+                type="button"
+                onClick={() => {
+                  window.electron.ipcRenderer.postNewBooking('open-site', ['https://demo.booco.ru', '/api/v1/login', 'D.Moskalev', '[{coolBrain}]', 'TEAMS']);
 
+                }}
+                className={(state==="init") ? "buttonGray":"hidden"}
+              > generate new Teams booking
+              </button>
 
 
             </div>

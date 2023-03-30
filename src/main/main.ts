@@ -91,7 +91,7 @@ const createWindow = async () => {
     kiosk: true, // should be true in production
     frame: false,  // should be false in production
     webPreferences: {
-      devTools: true, // also should be false in production
+      devTools: false, // also should be false in production
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -188,14 +188,18 @@ ipcMain.on('booco-postnewbook-req', async (event, arg) => {
 
         console.log("User authToken: %s\nUser ID: %s",
         user.data.authToken, user.data.userId);
-        // const today = new Date().getUTCDay().toString();
-        // const time = new Date().toTimeString();
+        const monthstr = (`0${  (new Date().getMonth() +1).toString()}`).slice(-2);
+        const today = `${new Date().getFullYear().toString()}-${monthstr}-${new Date().getDate().toString()}`;
+        const time = arg[4]==='ZOOM'? (new Date().getHours()+1).toString(): (new Date().getHours()+2).toString();
+        const subj = arg[4]==='ZOOM'? 'Тестовая конференция в Zoom':'Тестовая конференция в Teams';
+        const link = arg[4]==='ZOOM'? 'https://zoom.us/j/99267474904?pwd=WlloZGJscmRFWHFwaXorSXpudEdWZz09             ':'https://teams.live.com/meet/9439360345253';
         const nbk: NewBooking = await postNewBooking(
           arg[0],
-          '2023-03-27',
-          '13',
+          today,
+          time,
           '2fwKcjvxkbrJvtM7L',
-          'https://us05web.zoom.us/wc/82604234154/start',
+          subj,
+          link,
           user.data.authToken,
           user.data.userId) as NewBooking
         return nbk;
@@ -235,7 +239,7 @@ ipcMain.on('open-site', async (event, arg) => {
     win?.setBackgroundColor('#00ffffff'); // #AARRGGBB set transparent color
     win?.setKiosk(false);
     win?.setSize(300, 130, false);
-    win?.setPosition(0, 930, false);
+    win?.setPosition(0, 500, false);
     };
     reDrawWindowWithDelay();
   }

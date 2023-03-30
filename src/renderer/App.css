@@ -146,9 +146,13 @@ a:hover {
 }
 .schedule-header{
   align-items: flex-start;
+  background-color: #ffffff;
   display: flex;
   gap: 10px;
-  min-width: 900px;
+  display: flex;
+  flex-direction: row;
+  width: 860px;
+  height:5vh;
   padding: 10px 30px;
   position: relative;
 }
@@ -180,7 +184,7 @@ a:hover {
   font-size: large;
   font-weight: 600;
   position: relative;
-  width: 800px;
+  width: 560px;
 }
 .view-subject{
   align-items: center;
